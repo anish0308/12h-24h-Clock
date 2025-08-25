@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tanu's Clock</title>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      background: radial-gradient(circle at bottom, #0b132b, #1c2541, #3a506b);
+      overflow: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: transparent url('https://www.transparenttextures.com/patterns/stardust.png') repeat;
+      animation: twinkle 20s linear infinite;
+      opacity: 0.25;
+    }
+
+    @keyframes twinkle {
+      from { background-position: 0 0; }
+      to { background-position: 1000px 1000px; }
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2.5rem;
+      font-family: 'Great Vibes', cursive;
+      color: #ffb6c1;
+      text-shadow: 0 0 4px rgba(255,182,193,0.6);
+      z-index: 2;
+    }
+
+    .clock {
+      width: 90vmin;
+      height: 90vmin;
+      max-width: 420px;
+      max-height: 420px;
+      border: 6px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      position: relative;
+      background: radial-gradient(circle, #1a1a1a, #000);
+      box-shadow: 0 0 20px rgba(255,192,203,0.2);
+      z-index: 2;
+    }
+
+    .center {
+      width: 14px;
+      height: 14px;
+      background: #ffb6c1;
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      box-shadow: 0 0 4px rgba(255,182,193,0.8);
+    }
+
+    .hand {
+      position: absolute;
+      bottom: 50%;
+      left: 50%;
+      transform-origin: bottom center;
+      transform: translateX(-50%) rotate(0deg);
+      border-radius: 4px;
+    }
+
+    .hour {
+      width: 6px;
+      height: 25%;
+      background: #f5c6cb;
+      z-index: 5;
+    }
+
+    .minute {
+      width: 4px;
+      height: 35%;
+      background: #ffb6c1;
+      z-index: 6;
+    }
+
+    .second {
+      width: 2px;
+      height: 40%;
+      background: #ff4d6d;
+      z-index: 7;
+    }
+
+    .number, .number24 {
+      position: absolute;
+      font-weight: 600;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      font-family: 'Georgia', serif;
+    }
+
+    .number {
+      font-size: 1.1rem;
+      color: #fff;
+      text-shadow: 0 0 2px rgba(255,255,255,0.5);
+    }
+
+    .number24 {
+      font-size: 0.75rem;
+      color: #ffb6c1;
+      text-shadow: 0 0 1px rgba(255,182,193,0.5);
+    }
+
+    .digital {
+      margin-top: 25px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      padding: 8px 16px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    @media (max-width: 500px) {
+      h1 { font-size: 2rem; }
+      .number { font-size: 0.9rem; }
+      .number24 { font-size: 0.65rem; }
+      .digital { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Tanu's Clock</h1>
+  <div class="clock" id="clock">
+    <div class="center"></div>
+    <div class="hand hour" id="hour"></div>
+    <div class="hand minute" id="minute"></div>
+    <div class="hand second" id="second"></div>
+  </div>
+  <div class="digital" id="digital"></div>
+
+  <script>
+    const clock = document.getElementById("clock");
+
+    // Hour and 24-hour numbers
+    for (let i = 1; i <= 12; i++) {
+      const angle = (i / 12) * 2 * Math.PI;
+      const x = 200 + 160 * Math.sin(angle);
+      const y = 200 - 160 * Math.cos(angle);
+
+      const num = document.createElement("div");
+      num.className = "number";
+      num.style.left = `${x}px`;
+      num.style.top = `${y}px`;
+      num.textContent = i;
+      clock.appendChild(num);
+
+      const num24 = document.createElement("div");
+      num24.className = "number number24";
+      num24.style.left = `${200 + 120 * Math.sin(angle)}px`;
+      num24.style.top = `${200 - 120 * Math.cos(angle)}px`;
+      num24.textContent = i + 12 <= 24 ? i + 12 : i;
+      clock.appendChild(num24);
+    }
+
+    // Minute markers
+    for (let i = 0; i < 60; i++) {
+      const angle = (i / 60) * 2 * Math.PI;
+      const x2 = 200 + (i % 5 === 0 ? 150 : 160) * Math.sin(angle);
+      const y2 = 200 - (i % 5 === 0 ? 150 : 160) * Math.cos(angle);
+
+      const mark = document.createElement("div");
+      mark.style.position = "absolute";
+      mark.style.left = `${x2}px`;
+      mark.style.top = `${y2}px`;
+      mark.style.width = i % 5 === 0 ? "3px" : "1px";
+      mark.style.height = i % 5 === 0 ? "12px" : "6px";
+      mark.style.background = i % 5 === 0 ? "#fff" : "#bbb";
+      mark.style.transform = `translate(-50%, -50%) rotate(${i * 6}deg)`;
+      mark.style.borderRadius = "1px";
+      clock.appendChild(mark);
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const ms = now.getMilliseconds();
+      const sec = now.getSeconds() + ms / 1000; // fractional seconds for sweep
+      const min = now.getMinutes() + sec / 60;
+      const hr = now.getHours() + min / 60;
+
+      document.getElementById("second").style.transform =
+        `translateX(-50%) rotate(${sec * 6}deg)`;
+      document.getElementById("minute").style.transform =
+        `translateX(-50%) rotate(${min * 6}deg)`;
+      document.getElementById("hour").style.transform =
+        `translateX(-50%) rotate(${hr * 30}deg)`;
+
+      const digital = document.getElementById("digital");
+      const hours12 = Math.floor(hr) % 12 || 12;
+      const ampm = Math.floor(hr) >= 12 ? "PM" : "AM";
+      const time12 = `${hours12.toString().padStart(2,'0')}:${Math.floor(min).toString().padStart(2,'0')}:${Math.floor(sec).toString().padStart(2,'0')} ${ampm}`;
+      const time24 = `${Math.floor(hr).toString().padStart(2,'0')}:${Math.floor(min).toString().padStart(2,'0')}:${Math.floor(sec).toString().padStart(2,'0')}`;
+      digital.textContent = `${time12}  |  ${time24}`;
+    }
+
+    setInterval(updateClock, 50); // update every 50ms for smooth motion
+    updateClock();
+  </script>
+</body>
+</html>
